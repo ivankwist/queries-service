@@ -29,7 +29,6 @@ class QueryControllerTest {
     @Test
     public void getCancionEscuchasTest() throws Exception {
         doReturn(3).when(restTemplate).getForObject(any(), any());
-
         MvcResult result = this.mockMvc.perform(get("/cancion/escuchas?cancionID=cancionID"))
                             .andExpect(status().isOk()).andReturn();
         String content = result.getResponse().getContentAsString();
