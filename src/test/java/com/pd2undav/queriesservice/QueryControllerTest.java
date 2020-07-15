@@ -29,7 +29,7 @@ class QueryControllerTest {
     @Test
     public void testGetCancionEscuchasWithExistingId() throws Exception {
         doReturn(3).when(this.restTemplate).getForObject(any(), any());
-        MvcResult result = this.mockMvc.perform(get("/cancion/escuchas?cancionID=cancionID")).andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mockMvc.perform(get("/cancion/escuchas?cancionID=cancionID")).andReturn();
         String content = result.getResponse().getContentAsString();
 
         assertEquals("3", content);
