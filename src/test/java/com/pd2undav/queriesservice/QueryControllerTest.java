@@ -1,25 +1,33 @@
 package com.pd2undav.queriesservice;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.client.RestTemplate;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 class QueryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private TestRestTemplate restTemplate;
+
+    @MockBean
+    private RestTemplate restTemplate;
 
     @Test
-    public void getCancionEscuchas() throws Exception {
+    public void getCancionEscuchasTest() throws Exception {
         doReturn(3).when(restTemplate).getForObject(any(), any());
 
         MvcResult result = this.mockMvc.perform(get("/cancion/escuchas?cancionID=cancionID"))
