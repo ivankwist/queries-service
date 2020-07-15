@@ -1,0 +1,19 @@
+dist: xenial
+
+language: java
+
+jdk:
+  - openjdk8
+
+script: ./mvnw clean install
+
+env:
+  - MUSIC_ADDRESS=music-service MUSIC_PORT=8080 STATISTICS_ADDRESS=statistics-service STATISTICS_PORT=8080 USERS_ADDRESS=users-service USERS_PORT=8080
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+jobs:
+  include:
+    - stage: Test
+      script: ./mvnw clean test
