@@ -21,17 +21,17 @@ public class QueryController {
 
     private static final Logger log = LoggerFactory.getLogger(QueryController.class);
 
-    @Value("${STATISTICS_ADDRESS}")
+    @Value("${STATISTICS_ADDRESS:statistics-service}")
     private String STATISTICS_ADDRESS;
-    @Value("${STATISTICS_PORT}")
+    @Value("${STATISTICS_PORT:8080}")
     private String STATISTICS_PORT;
-    @Value("${MUSIC_ADDRESS}")
+    @Value("${MUSIC_ADDRESS:music-service}")
     private String MUSIC_ADDRESS;
-    @Value("${MUSIC_PORT}")
+    @Value("${MUSIC_PORT:8080}")
     private String MUSIC_PORT;
-    @Value("${USERS_ADDRESS}")
+    @Value("${USERS_ADDRESS:users-service}")
     private String USERS_ADDRESS;
-    @Value("${USERS_PORT}")
+    @Value("${USERS_PORT:8080}")
     private String USERS_PORT;
 
     private Random rand = new Random();
