@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.client.RestTemplate;
 
 import static org.mockito.Mockito.*;
@@ -19,6 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+@TestPropertySource(properties = {"STATISTICS_ADDRESS=mock",
+                                  "STATISTICS_PORT=mock",
+                                  "MUSIC_ADDRESS=mock",
+                                  "MUSIC_PORT=mock",
+                                  "USERS_ADDRESS=mock",
+                                  "USERS_PORT=mock"})
 @SpringBootTest
 @AutoConfigureMockMvc
 class QueryControllerTest {
@@ -35,7 +40,7 @@ class QueryControllerTest {
     }
 
     @Test
-    public void testGetCancionEscuchas() throws Exception {
+    public void testGetCancionEscuchasTest() throws Exception {
         when(this.restTemplate.getForObject(anyString(), any(Class.class))).thenReturn(Integer.valueOf(3));
 
         MvcResult result = this.mockMvc.perform(get("/cancion/escuchas").param("cancionID", "cancionID")).andReturn();
@@ -45,7 +50,7 @@ class QueryControllerTest {
     }
 
     @Test
-    void getAmbitoEscuchas() throws Exception {
+    void getAmbitoEscuchasTest() throws Exception {
         when(this.restTemplate.getForObject(anyString(), any(Class.class))).thenReturn(Integer.valueOf(17));
 
         MvcResult result = this.mockMvc.perform(get("/album/escuchas").param("ambitoID", "ambitoID")).andReturn();
@@ -55,7 +60,7 @@ class QueryControllerTest {
     }
 
     @Test
-    void getMostListenedCancion() throws Exception {
+    void getMostListenedCancionTest() throws Exception {
         Cancion returnedCancion = new Cancion("idCancion", "nombre");
         when(this.restTemplate.getForObject(anyString(), eq(String.class))).thenReturn("cancionID");
         when(this.restTemplate.getForObject(anyString(), eq(Cancion.class))).thenReturn(returnedCancion);
@@ -67,26 +72,26 @@ class QueryControllerTest {
     }
 
     @Test
-    void getMostListenedAlbum() {
+    void getMostListenedAlbumTest() {
     }
 
     @Test
-    void getMostListenedPlaylist() {
+    void getMostListenedPlaylistTest() {
     }
 
     @Test
-    void getArtistaAmbitos() {
+    void getArtistaAmbitosTest() {
     }
 
     @Test
-    void getAmbitoCanciones() {
+    void getAmbitoCancionesTest() {
     }
 
     @Test
-    void getUser() {
+    void getUserTest() {
     }
 
     @Test
-    void getNewAlbumForUser() {
+    void getNewAlbumForUserTest() {
     }
 }
