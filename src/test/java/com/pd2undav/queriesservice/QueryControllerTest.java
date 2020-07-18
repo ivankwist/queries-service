@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -69,29 +71,110 @@ class QueryControllerTest {
                 .param("fechaStart", "fechaStart")
                 .param("fechaEnd", "fechaEnd"))
                 .andExpect(jsonPath("$.id_cancion").value(returnedCancion.getId_cancion()));
+
     }
 
     @Test
-    void getMostListenedAlbumTest() {
+    void getMostListenedAlbumTest() throws Exception {
+        Ambito returnedAmbito = new Ambito("idAmbito", "nombre", "tipo");
+        when(this.restTemplate.getForObject(anyString(), eq(String.class))).thenReturn("ambitoID");
+        when(this.restTemplate.getForObject(anyString(), eq(Ambito.class))).thenReturn(returnedAmbito);
+
+        this.mockMvc.perform(get("/escuchas/album")
+                .param("fechaStart", "fechaStart")
+                .param("fechaEnd", "fechaEnd"))
+                .andExpect(jsonPath("$.id_ambito").value(returnedAmbito.getId_ambito()));
+
     }
 
     @Test
-    void getMostListenedPlaylistTest() {
+    void getMostListenedRadioTest() throws Exception {
+        Ambito returnedAmbito = new Ambito("idAmbito", "nombre", "tipo");
+        when(this.restTemplate.getForObject(anyString(), eq(String.class))).thenReturn("ambitoID");
+        when(this.restTemplate.getForObject(anyString(), eq(Ambito.class))).thenReturn(returnedAmbito);
+
+        this.mockMvc.perform(get("/escuchas/radio")
+                .param("fechaStart", "fechaStart")
+                .param("fechaEnd", "fechaEnd"))
+                .andExpect(jsonPath("$.id_ambito").value(returnedAmbito.getId_ambito()));
+
     }
 
     @Test
-    void getArtistaAmbitosTest() {
+    void getArtistaAmbitosTest() throws Exception {
+        Ambito[] returnedAmbitos = {new Ambito("idAmbito1", "nombre1", "tipo1"),
+                                    new Ambito("idAmbito2", "nombre2", "tipo2")};
+        ResponseEntity<Ambito[]> mockResponse = new ResponseEntity<Ambito[]>(returnedAmbitos, HttpStatus.OK);
+
+        when(this.restTemplate.getForEntity(anyString(), eq(Ambito[].class))).thenReturn(mockResponse);
+
+
+        this.mockMvc.perform(get("/artista/ambitos")
+                .param("artistaID", "artistaID"))
+                .andExpect(jsonPath("$[0].id_ambito").value(returnedAmbitos[0].getId_ambito()))
+                .andExpect(jsonPath("$[1].id_ambito").value(returnedAmbitos[1].getId_ambito()));
+
     }
 
     @Test
-    void getAmbitoCancionesTest() {
+    void getAmbitoCancionesTest() throws Exception {
+        Cancion[] returnedCanciones = {new Cancion("idCancion1", "nombre1"),
+                                     new Cancion("idCancion2", "nombre2")};
+        ResponseEntity<Cancion[]> mockResponse = new ResponseEntity<Cancion[]>(returnedCanciones, HttpStatus.OK);
+
+        when(this.restTemplate.getForEntity(anyString(), eq(Cancion[].class))).thenReturn(mockResponse);
+
+
+        this.mockMvc.perform(get("/album/canciones")
+                .param("ambitoID", "ambitoID"))
+                .andExpect(jsonPath("$[0].id_cancion").value(returnedCanciones[0].getId_cancion()))
+                .andExpect(jsonPath("$[1].id_cancion").value(returnedCanciones[1].getId_cancion()));
     }
 
     @Test
-    void getUserTest() {
+    void getUserTest() throws Exception {
+        User returnedUser = new User("idUser", "username", "nombre");
+        when(this.restTemplate.getForObject(anyString(), eq(User.class))).thenReturn(returnedUser);
+
+        this.mockMvc.perform(get("/user")
+                .param("userID", "userID"))
+                .andExpect(jsonPath("$.id_user").value(returnedUser.getId_user()));
     }
 
     @Test
-    void getNewAlbumForUserTest() {
+    void getNewAlbumForUserExistingAlbumTest() throws Exception {
+        String[] listenedArtists = {"artista1", "artista2"};
+        String[] listenedAlbums = {"album1", "album2"};
+        String[] allAlbums = {"album1", "album2", "album3"};
+
+        when(this.restTemplate.getForEntity(anyString(), eq(String[].class)))
+                .thenReturn(new ResponseEntity<String[]>(listenedArtists, HttpStatus.OK))
+                .thenReturn(new ResponseEntity<String[]>(listenedAlbums, HttpStatus.OK))
+                .thenReturn(new ResponseEntity<String[]>(allAlbums, HttpStatus.OK));
+
+        Ambito returnedAmbito = new Ambito("album3", "nombre", "tipo");
+        when(this.restTemplate.getForObject(anyString(), eq(Ambito.class))).thenReturn(returnedAmbito);
+
+        this.mockMvc.perform(get("/user/discovery")
+                .param("userID", "userID"))
+                .andExpect(jsonPath("$.id_ambito").value(returnedAmbito.getId_ambito()));
+    }
+
+    void getNewAlbumForUserNonExistingAlbumTest() throws Exception {
+        String[] listenedArtists = {"artista1", "artista2"};
+        String[] listenedAlbums = {"album1", "album2"};
+        String[] allAlbums = {"album1", "album2"};
+
+        when(this.restTemplate.getForEntity(anyString(), eq(String[].class)))
+                .thenReturn(new ResponseEntity<String[]>(listenedArtists, HttpStatus.OK))
+                .thenReturn(new ResponseEntity<String[]>(listenedAlbums, HttpStatus.OK))
+                .thenReturn(new ResponseEntity<String[]>(allAlbums, HttpStatus.OK));
+
+        Ambito returnedAmbito = new Ambito();
+        when(this.restTemplate.getForObject(anyString(), eq(Ambito.class))).thenReturn(returnedAmbito);
+
+        this.mockMvc.perform(get("/user/discovery")
+                .param("userID", "userID"))
+                .andExpect(jsonPath("$.id_ambito").value((String) null));
     }
 }

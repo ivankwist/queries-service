@@ -98,8 +98,8 @@ public class QueryController {
 
     // La radio mas escuchado en un rango de tiempo
     @RequestMapping("/escuchas/radio")
-    public ResponseEntity<Ambito> getMostListenedPlaylist(@RequestParam(value="fechaStart") String fechaStart,
-                                                          @RequestParam(value="fechaEnd") String fechaEnd) {
+    public ResponseEntity<Ambito> getMostListenedRadio(@RequestParam(value="fechaStart") String fechaStart,
+                                                       @RequestParam(value="fechaEnd") String fechaEnd) {
 
         String url1 = String.format("http://%s:%s/escuchas/radio?fechaStart=%s&fechaEnd=%s", STATISTICS_ADDRESS, STATISTICS_PORT, fechaStart, fechaEnd);
         String radio_id = restTemplate.getForObject(url1, String.class);
